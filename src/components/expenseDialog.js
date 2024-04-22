@@ -13,9 +13,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import {  useAuth } from "../hooks/useAuth";
-import { postExpenseData, updateDocument } from "../firebase/firestore";
+import { postExpenseData,  updateExpenseData } from "../firebase/firestore";
 import { toast } from "react-toastify";
-import LoadingButton from '@mui/lab/LoadingButton';
 import ButtonLoading from "./buttonLoading";
 let ininitalData = {
   location: "",
@@ -26,7 +25,7 @@ let ininitalData = {
 }
 const ExpenseDialog = ({reload, form, onClose, state = "create", data}) => {
     const [loading, setLoading] = useState(false)
-    const succesfulPosting = () => toast( state == "create" ?"Successfully added" : "Successfully saved", {type: "success"});
+    const succesfulPosting = () => toast(state == "create" ?"Successfully added" : "Successfully updated", {type: "success"});
     const errorPosting = (title) => toast(title, {type: "error"});
 
     let {authUser} = useAuth()
@@ -44,17 +43,19 @@ const ExpenseDialog = ({reload, form, onClose, state = "create", data}) => {
         setTimeout(()=>{onClose()},500)
     },[loading])
     const submitExpenseData = async() => {
+      if(!expenseData.address
+        || !expenseData.amount
+        || !expenseData.items 
+        || !expenseData.location) {
+           errorPosting("Error added")
+           return;
+
+        }
+
         if(state === "update"){
-          updateDocument(uid, expenseData.id, expenseData, succesfulPosting, errorPosting, setLoading)
-        }else if(!expenseData.address
-         && !expenseData.amount
-         && !expenseData.items 
-         && !expenseData.location) {
-
-            errorPosting("Error added")
-            return;
-
-         }
+            updateExpenseData(uid, expenseData.id, expenseData, succesfulPosting, errorPosting, setLoading);
+          return;
+        }
         // ELSE IF
 
         postExpenseData(expenseData, uid, succesfulPosting, setLoading, errorPosting);
@@ -110,7 +111,7 @@ const ExpenseDialog = ({reload, form, onClose, state = "create", data}) => {
              label="Basic date picker" />
         </DemoContainer>
       </LocalizationProvider>
-      <ButtonLoading children='submit' status={loading} submitExpenseData={submitExpenseData} />   
+      <ButtonLoading children={state} status={loading} submitExpenseData={submitExpenseData} />   
     </Box>
   </Dialog>
 };

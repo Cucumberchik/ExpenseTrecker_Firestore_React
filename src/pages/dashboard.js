@@ -12,11 +12,21 @@ import { ToastContainer } from "react-toastify";
 import { ExpenseCard } from "../components/expenseCard";
 import { getExpenseData } from "../firebase/firestore";
 import { useAuth } from "../hooks/useAuth";
+import DeleteDataDialog from "../components/expenseDeleteDialog";
 
 const Dashboard = () => {
   const [reloadData, setReloadData] = useState(false)
   const [expenseData, setExpenseData] = useState([]);
   const [status, setStatus] = useState(true);
+
+  const [formOpenDelete, setFormOpenDelete] = useState({state: false, id: ""});
+  const handleCloseDialog = () => {
+    setFormOpenDelete({id: "", state: false});
+    setReloadData(true);
+  }
+  const handleOpenDeleteDialog = (id) =>{
+    setFormOpenDelete({state: true, id});
+  }
   
   const [updateExpense, setUpdateExpense] = useState({state: "create", data: {}})
 
@@ -24,8 +34,8 @@ const Dashboard = () => {
   const [form, setForm] = useState(false);
   useEffect(()=>{
     getExpenseData(authUser.uid, setExpenseData, setStatus)
-    setTimeout(()=>{setReloadData(false)})
-},[reloadData])
+    setTimeout(()=>{setReloadData(false)},1)
+},[reloadData, status])
   return (
     <>
       <Header />
@@ -39,7 +49,12 @@ const Dashboard = () => {
         </Box>
         <Box sx={{display: 'flex', flexDirection: "column", gap: 1}}>
         {expenseData.map(el=>(
-          <ExpenseCard setUpdateExpense={setUpdateExpense} data={el} openUpdate={()=>setForm(true)}/>
+          <ExpenseCard 
+          setUpdateExpense={setUpdateExpense} 
+          data={el} 
+          key={el.id}
+          openUpdate={()=>setForm(true)} 
+          handleOpenDeleteDialog={handleOpenDeleteDialog} />
 
         ))}
         </Box>
@@ -50,6 +65,7 @@ const Dashboard = () => {
         form={form} onClose={() => {
           setUpdateExpense({state: "create", data: {}})
           setForm(false)}}/>
+          <DeleteDataDialog formOpenDelete={formOpenDelete.state} handleClose={handleCloseDialog} id={formOpenDelete.id} />
       </Container>
     </>
   );

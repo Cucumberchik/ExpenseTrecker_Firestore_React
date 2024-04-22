@@ -2,7 +2,7 @@ import { Button, Card, CardActions, CardContent, Typography } from "@mui/materia
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export const ExpenseCard = ({setUpdateExpense, data, openUpdate}) =>{
+export const ExpenseCard = ({setUpdateExpense, data, openUpdate, handleOpenDeleteDialog}) =>{
     const updateDataExpense = () => {
         openUpdate();
         setUpdateExpense({state: "update", data})
@@ -37,6 +37,7 @@ export const ExpenseCard = ({setUpdateExpense, data, openUpdate}) =>{
        variant="outlined" 
        color="error"
        startIcon={<DeleteIcon/>}
+       onClick={()=> handleOpenDeleteDialog(data.id)}
        >Delete</Button>
     </CardActions>
   </Card>

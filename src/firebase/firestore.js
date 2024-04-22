@@ -2,18 +2,16 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from ".";
 
-export const postExpenseData = async(expenseData, uid, succesfulPosting, setLoading, errorPosting) =>{
+export const postExpenseData = async(expenseData, uid,  setLoading, errorPosting) =>{
     setLoading(true);
     try {
         const docRef = await addDoc(collection(db, uid), expenseData);
-        succesfulPosting()
       } catch (e) {
         errorPosting(e.message)
       } finally {
         setLoading(false);
       }
 }
-
 export const getExpenseData = async(uid, setExpenseData, setStatus) =>{
   setStatus(true);
   try{
@@ -31,23 +29,24 @@ export const getExpenseData = async(uid, setExpenseData, setStatus) =>{
   }
 }
 
-export const updateDocument = async(uid, id, newData, succesfulPosting, errorPosting, setLoading) => {
+export const updateExpenseData = async(uid, id, newData, succesfulPosting, errorPosting, setLoading) => {
   const docRef = doc(db, uid, id);
-
+  setLoading(true)
   try {
     await updateDoc(docRef, newData);
-  } catch (error) {
-    console.error("Ошибка при обновлений данных", error);
-    throw error; 
+    succesfulPosting()
+  } catch (e) {
+    errorPosting(e.message)
+  }finally{
+    setLoading(false)
   }
 }
 
-async function deleteDocument(uid, id) {
-  const docRef = doc(db, uid, id);
-
+export const deleteExpenseData = async(uid, id, setLoading) => {
+  setLoading(true)
   try {
-    await deleteDoc(docRef);
+    await deleteDoc(doc(db, uid, id));
+    setLoading(false)
   } catch (error) {
-    throw error; // Обработайте ошибку здесь или передайте дальше
   }
 }
