@@ -1,10 +1,12 @@
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { Container, Typography, Button, Box, Dialog } from "@mui/material";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 import { auth } from "../firebase";
+import { useAuth } from "../hooks/useAuth";
+import {useNavigate } from "react-router-dom";
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -27,14 +29,19 @@ const uiConfig = {
 const Index = () => {
   const UI = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
   const [login, setLogin] = useState(false);
-
+  let {authUser} = useAuth()
+  let navigate = useNavigate()
+  useEffect(()=>{
+    if(authUser){
+      navigate('/dashboard')
+    };
+  },[])
   const onAuthenticate = () => {
     setLogin(true);
     setTimeout(() => {
       UI.start("#firebaseui-auth-container", uiConfig);
     });
   };
-
   return (
     <Container>
       <Box padding="5rem">

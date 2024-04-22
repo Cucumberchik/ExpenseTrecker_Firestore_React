@@ -1,27 +1,35 @@
 import {
   Box,
-  Button,
   Container,
-  Dialog,
   IconButton,
-  TextField,
   Typography,
 } from "@mui/material";
-import { useAuth } from "../hooks/useAuth";
 import Header from "../components/header";
 import { Add } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ExpenseDialog from "../components/expenseDialog";
+import { ToastContainer } from "react-toastify";
+import { ExpenseCard } from "../components/expenseCard";
+import { getExpenseData } from "../firebase/firestore";
+import { useAuth } from "../hooks/useAuth";
 
 const Dashboard = () => {
+  const [reloadData, setReloadData] = useState(false)
+  const [expenseData, setExpenseData] = useState([]);
+  const [status, setStatus] = useState(true);
+  
+  const [updateExpense, setUpdateExpense] = useState({state: "create", data: {}})
+
+  const {authUser} = useAuth()
   const [form, setForm] = useState(false);
-
-  const { authUser } = useAuth();
-
-  console.log("authUser ", authUser);
-
+  useEffect(()=>{
+    getExpenseData(authUser.uid, setExpenseData, setStatus)
+    setTimeout(()=>{setReloadData(false)})
+},[reloadData])
   return (
     <>
       <Header />
+      <ToastContainer />
       <Container>
         <Box display={"flex"} alignItems={"center"} pt={2} gap={1}>
           <Typography variant="h6">Expenses</Typography>
@@ -29,22 +37,19 @@ const Dashboard = () => {
             <Add />
           </IconButton>
         </Box>
-        <Dialog open={form} onClose={() => setForm(false)}>
-          <Box
-            minWidth="400px"
-            p="1.5rem"
-            display="flex"
-            flexDirection="column"
-            gap={1}
-          >
-            <Typography variant="h6">Add Expense</Typography>
-            <TextField label="Location" variant="standard" />
-            <TextField label="Location Address" variant="standard" />
-            <TextField label="Items" variant="standard" />
-            <TextField label="Amount" variant="standard" />
-            <Button variant="contained">Submit</Button>
-          </Box>
-        </Dialog>
+        <Box sx={{display: 'flex', flexDirection: "column", gap: 1}}>
+        {expenseData.map(el=>(
+          <ExpenseCard setUpdateExpense={setUpdateExpense} data={el} openUpdate={()=>setForm(true)}/>
+
+        ))}
+        </Box>
+        <ExpenseDialog 
+        reload={()=>setReloadData(true)} 
+        state = {updateExpense.state}
+        data = {updateExpense.data}
+        form={form} onClose={() => {
+          setUpdateExpense({state: "create", data: {}})
+          setForm(false)}}/>
       </Container>
     </>
   );

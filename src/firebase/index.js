@@ -1,17 +1,16 @@
 import { getAuth } from '@firebase/auth';
 import { initializeApp } from 'firebase/app';
+import { getFirestore } from "firebase/firestore";
 
-// TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBWTqBkKWj6kGuuDtuWOmfMGTLerBkgbuM",
-  authDomain: "fir-app-eff25.firebaseapp.com",
-  projectId: "fir-app-eff25",
-  storageBucket: "fir-app-eff25.appspot.com",
-  messagingSenderId: "63924157201",
-  appId: "1:63924157201:web:86ac6a9496d94eb90caab0",
-  measurementId: "G-LV7G7ZST4J"
+  apiKey: "AIzaSyAUtI0ueKRYp_tZjGIAP62oBxFyeHJS8OE",
+  authDomain: "dordoi-plaza.firebaseapp.com",
+  projectId: "dordoi-plaza",
+  storageBucket: "dordoi-plaza.appspot.com",
+  messagingSenderId: "779167121768",
+  appId: "1:779167121768:web:2456dd668a3d7b0a2096dd"
 };
 
 const app = initializeApp(firebaseConfig);
-
 export const auth = getAuth(app);
+export const db = getFirestore(app);
