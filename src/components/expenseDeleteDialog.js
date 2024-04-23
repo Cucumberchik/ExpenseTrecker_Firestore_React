@@ -6,13 +6,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../hooks/useAuth';
-import { deleteExpenseData } from '../firebase/firestore';
+import { deleteExpenseData, getExpenseData } from '../firebase/firestore';
 
-export default function DeleteDataDialog({formOpenDelete, handleClose, id}) {
-    const [loading, setLoading] = useState(false)
+export default function DeleteDataDialog({formOpenDelete, handleClose, id, setExpenseData}) {
+    const [loading, setLoading] = useState(false);
     let {authUser} = useAuth()
     const handleDeleteData = () =>{
         deleteExpenseData(authUser.uid, id ,setLoading);
+        getExpenseData(authUser.uid, setExpenseData, setLoading)
         handleClose();
     }
   return (

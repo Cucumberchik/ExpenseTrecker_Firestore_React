@@ -13,7 +13,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import {  useAuth } from "../hooks/useAuth";
-import { postExpenseData,  updateExpenseData } from "../firebase/firestore";
+import { getExpenseData, postExpenseData,  updateExpenseData } from "../firebase/firestore";
 import { toast } from "react-toastify";
 import ButtonLoading from "./buttonLoading";
 let ininitalData = {
@@ -23,7 +23,7 @@ let ininitalData = {
   amount: "",
   date:  dayjs().format('YYYY-MM-DD hh:mm:ss')
 }
-const ExpenseDialog = ({reload, form, onClose, state = "create", data}) => {
+const ExpenseDialog = ({reload, form, onClose, state = "create", data, setData}) => {
     const [loading, setLoading] = useState(false)
     const succesfulPosting = () => toast(state == "create" ?"Successfully added" : "Successfully updated", {type: "success"});
     const errorPosting = (title) => toast(title, {type: "error"});
@@ -59,6 +59,7 @@ const ExpenseDialog = ({reload, form, onClose, state = "create", data}) => {
         // ELSE IF
 
         postExpenseData(expenseData, uid, succesfulPosting, setLoading, errorPosting);
+        getExpenseData(uid, setData, setLoading)
         //
 
         setExpenseData({

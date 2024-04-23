@@ -26,6 +26,7 @@ const Dashboard = () => {
   }
   const handleOpenDeleteDialog = (id) =>{
     setFormOpenDelete({state: true, id});
+
   }
   
   const [updateExpense, setUpdateExpense] = useState({state: "create", data: {}})
@@ -34,8 +35,7 @@ const Dashboard = () => {
   const [form, setForm] = useState(false);
   useEffect(()=>{
     getExpenseData(authUser.uid, setExpenseData, setStatus)
-    setTimeout(()=>{setReloadData(false)},1)
-},[reloadData, status])
+},[])
   return (
     <>
       <Header />
@@ -62,10 +62,11 @@ const Dashboard = () => {
         reload={()=>setReloadData(true)} 
         state = {updateExpense.state}
         data = {updateExpense.data}
+        setData = {setExpenseData}
         form={form} onClose={() => {
           setUpdateExpense({state: "create", data: {}})
           setForm(false)}}/>
-          <DeleteDataDialog formOpenDelete={formOpenDelete.state} handleClose={handleCloseDialog} id={formOpenDelete.id} />
+          <DeleteDataDialog formOpenDelete={formOpenDelete.state} handleClose={handleCloseDialog} id={formOpenDelete.id} setExpenseData={setExpenseData} />
       </Container>
     </>
   );

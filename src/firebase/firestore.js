@@ -2,10 +2,11 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from ".";
 
-export const postExpenseData = async(expenseData, uid,  setLoading, errorPosting) =>{
+export const postExpenseData = async(expenseData, uid, succesful,  setLoading, errorPosting) =>{
     setLoading(true);
     try {
         const docRef = await addDoc(collection(db, uid), expenseData);
+        succesful()
       } catch (e) {
         errorPosting(e.message)
       } finally {
